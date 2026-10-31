@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="theme-color" content="#243d35" />
+    <meta name="description" content="Signal is a human-in-the-loop social media content studio." />
+    <title>Signal — Content Studio</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Local dev auto-login: checks session once per tab, redirects to dev-login if unauthenticated.
+      // This bypasses the cached JS bundle's broken OAuth redirect.
+      (function() {
+        if (sessionStorage.getItem('dev-login-check')) return;
+        sessionStorage.setItem('dev-login-check', '1');
+        fetch('/api/trpc/auth.me?input=' + encodeURIComponent(JSON.stringify({json:null})), {credentials:'include'})
+          .then(function(r){return r.json();})
+          .then(function(d){if(!d||!d.result||!d.result.data||!d.result.data.json){window.location.href='/api/auth/dev-login';}})
+          .catch(function(){});
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+    <script defer src="%VITE_ANALYTICS_ENDPOINT%/umami" data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
+  </body>
+</html>
